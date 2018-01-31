@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        id="@+id/abcparcela"
+        title="@string/tab_abcparcela"
+        barColorWhenSelected="@color/colorPrimary"
+        icon="@drawable/ic_parcela"
+        />
+    <tab
+        id="@+id/mapa"
+        title="@string/tab_abcparcela"
+        barColorWhenSelected="@color/colorPrimary"
+        icon="@drawable/ic_map"
+        />
+</tabs>
