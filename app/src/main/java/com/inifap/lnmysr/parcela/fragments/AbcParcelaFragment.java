@@ -7,14 +7,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,14 +25,18 @@ import android.widget.EditText;
 
 import com.inifap.lnmysr.parcela.R;
 
+import static android.content.Context.LOCATION_SERVICE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class AbcParcelaFragment extends Fragment {
 
     AlertDialog alert = null;
-    LocationManager mlocManager;
+    LocationManager locationManager;
+    LocationListener locationListener;
     private EditText latitud, longitud;
+    FloatingActionButton ubicacion;
 
     public AbcParcelaFragment() {
         // Required empty public constructor
@@ -42,112 +49,77 @@ public class AbcParcelaFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_abc_parcela, container, false);
 
-        ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-
-
-        final EditText latitud = (EditText) rootView.findViewById(R.id.latitud);
-        final EditText longitud = (EditText) rootView.findViewById(R.id.longitud);
-        FloatingActionButton ubicacion = (FloatingActionButton) rootView.findViewById(R.id.ubicacion);
+        latitud = (EditText) rootView.findViewById(R.id.latitud);
+        longitud = (EditText) rootView.findViewById(R.id.longitud);
+        ubicacion = (FloatingActionButton) rootView.findViewById(R.id.ubicacion);
         /*ColorStateList csl = new ColorStateList(new int[][]{new int[0]}, new int[]{0xff00ff00});
         ubicacion.setBackgroundTintList(csl);*/
 
-        //https://stackoverflow.com/questions/33865445/gps-location-provider-requires-access-fine-location-permission-for-android-6-0/33866120
-        ubicacion.setOnClickListener(new View.OnClickListener() {
+        //locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
             @Override
-            public void onClick(View v) {
-                mlocManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
-                LocationListener mlocListener = new MyLocationListener();
-                //mlocManager.requestLocationUpdates( LocationManager.NETWORK_PROVIDER, 0, 0, mlocListener);
-                mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
-
-                Location lastLocation = mlocManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-                if (lastLocation == null) {
-                    //Toast.makeText(getApplicationContext(), "Enciende el GPS", Toast.LENGTH_LONG).show();
-                    if (!mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                        AlertNoGps();
-                    }
-                }else {
-                    String latitudeInfo = "" + lastLocation.getLatitude();
-                    String longitudeInfo = "" + lastLocation.getLongitude();
-
-                    latitud.setText(latitudeInfo);
-                    longitud.setText(longitudeInfo);
-
-                }
+            public void onLocationChanged(Location location) {
+                latitud.append("\n " + location.getLongitude() + " " + location.getLatitude());
             }
-        });
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+                Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(i);
+            }
+        };
+
+        configure_button();
+
+        //https://stackoverflow.com/questions/33865445/gps-location-provider-requires-access-fine-location-permission-for-android-6-0/33866120
+        //https://www.youtube.com/watch?v=ZgmeSK2GZDs
+
+        //https://www.youtube.com/watch?v=QNb_3QKSmMk
+        //https://github.com/miskoajkula/Gps_location/blob/master/app/src/main/java/testing/gps_location/MainActivity.java
 
         return rootView;
     }
 
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-            // other 'case' lines to check for other
-            // permissions this app might request
+            case 10:
+                configure_button();
+                break;
+            default:
+                break;
         }
     }
 
-    public class MyLocationListener implements LocationListener {
-        @Override
-
-        public void onLocationChanged(Location loc){
-
-            String latitudeInfo = "" + loc.getLatitude();
-            String longitudeInfo = "" + loc.getLongitude();
-
-            latitud.setText(latitudeInfo);
-            longitud.setText(longitudeInfo);
-
-            /*String Text = "location: " +
-                    "Latitud = " + loc.getLatitude() +
-                    "Longitud = " + loc.getLongitude();
-            tv.setText(Text);*/
-
+    void configure_button(){
+        // first check for permissions
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET}
+                        ,10);
+            }
+            return;
         }
-        public void onProviderDisabled(String provider){
-
-            //nothin
-        }
-
-
-        public void onProviderEnabled(String provider){
-
-            //nothin
-        }
-
-        public void onStatusChanged(String provider, int status, Bundle extras){
-            //nothin
-        }
-    }/* End of Class MyLocationListener */
-
-    private void AlertNoGps() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setMessage("El sistema GPS esta desactivado, ¿Desea activarlo?")
-                .setCancelable(false)
-                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        dialog.cancel();
-                    }
-                });
-        alert = builder.create();
-        alert.show();
+        // this code won't execute IF permissions are not allowed, because in the line above there is return statement.
+        ubicacion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //noinspection MissingPermission
+                locationManager.requestLocationUpdates("gps", 5000, 0, locationListener);
+            }
+        });
     }
 
 }
