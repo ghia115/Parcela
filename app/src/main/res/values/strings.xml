@@ -6,4 +6,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tab_abcparcela">Parcela</string>
     <string name="tab_mapa">Mapa</string>
+    <string name="parcela">Parcela</string>
+    <string name="latitud">Latitud</string>
+    <string name="longitud">Longitud</string>
 </resources>
