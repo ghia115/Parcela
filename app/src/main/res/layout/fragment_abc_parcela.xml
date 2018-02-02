@@ -15,6 +15,7 @@
             android:orientation="vertical">
 
             <EditText
+                android:id="@+id/parcela"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/parcela"/>
@@ -54,12 +55,19 @@
                         android:id="@+id/ubicacion"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
                         app:backgroundTint="@android:color/darker_gray"
                         android:src="@android:mipmap/sym_def_app_icon"/>
 
                 </LinearLayout>
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/updateBase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Crear"/>
 
         </LinearLayout>
 
