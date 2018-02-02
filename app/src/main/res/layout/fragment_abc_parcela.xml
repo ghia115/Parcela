@@ -7,12 +7,15 @@
     android:fitsSystemWindows="true"
     tools:context="com.inifap.lnmysr.parcela.fragments.AbcParcelaFragment">
 
+        <include layout="@layout/actionbar_toolbar_abc"></include>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/padding_fragment"
             android:paddingRight="@dimen/padding_fragment"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <EditText
                 android:id="@+id/parcela"

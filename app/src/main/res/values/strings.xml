@@ -9,4 +9,5 @@
     <string name="parcela">Parcela</string>
     <string name="latitud">Latitud</string>
     <string name="longitud">Longitud</string>
+    <string name="toolbar_tittle_abc">Parcela</string>
 </resources>
