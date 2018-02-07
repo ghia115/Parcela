@@ -10,4 +10,6 @@
     <string name="latitud">Latitud</string>
     <string name="longitud">Longitud</string>
     <string name="toolbar_tittle_abc">Parcela</string>
+    <string name="pause">Pausar</string>
+    <string name="resume">Resumen</string>
 </resources>

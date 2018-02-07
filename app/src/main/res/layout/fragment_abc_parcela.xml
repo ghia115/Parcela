@@ -54,12 +54,12 @@
                     android:orientation="horizontal"
                     android:gravity="center">
 
-                    <android.support.design.widget.FloatingActionButton
+                    <Button
                         android:id="@+id/ubicacion"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginTop="10dp"
-                        app:backgroundTint="@android:color/darker_gray"
+                        android:onClick="toggleGPSUpdates"
                         android:src="@android:mipmap/sym_def_app_icon"/>
 
                 </LinearLayout>
